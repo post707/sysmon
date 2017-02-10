@@ -13,13 +13,26 @@ func main() {
 	// 	exec.Command("/bin/sh", "-c", "sar -u|grep -v -E 'Linux|平均时间|cpu'|tail -n 3"),
 	// }
 	cpuStat()
+
 }
 
-func cpuStat() {
+//返回三个字段，时间，%iowait，%idle
+func cpuStat() []byte {
 	cmd := exec.Command("/bin/sh", "-c", "sar -u|grep -v -E 'Linux|平均时间|cpu'|tail -n 3")
-	out, err := cmd.CombinedOutput()
+	cpustat, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(string(out))
+	fmt.Println(string(cpustat))
+	return cpustat
+}
+
+//
+
+func memStat() {
+
+}
+
+func ioStat() {
+
 }
