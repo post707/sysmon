@@ -68,20 +68,27 @@ func echoHandler(conns *map[string]net.Conn, messages chan string, clientip chan
 		fmt.Println("接收到的数据: ", msg)
 		for key, value := range *conns {
 			if clientip == key {
-
-				fmt.Println("connection is connected from ...", "ip", key, "values", value.RemoteAddr().String())
-
-				sendmsg := cpuStat()
-				_, err := value.Write([]byte(sendmsg))
-				if err != nil {
-					fmt.Println(err.Error())
-					delete(*conns, key)
+				switch msg {
+				case "cpu":
+					test(key, value, conns)
 				}
+
 				delete(*conns, key)
 			}
 		}
 	}
 
+}
+
+func test(key string, value net.Conn, conns *map[string]net.Conn) {
+	fmt.Println("connection is connected from ...", "ip", key, "values", value.RemoteAddr().String())
+
+	sendmsg := cpuStat()
+	_, err := value.Write([]byte(sendmsg))
+	if err != nil {
+		fmt.Println(err.Error())
+		delete(*conns, key)
+	}
 }
 
 ////////////////////////////////////////////////////////
