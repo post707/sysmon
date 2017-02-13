@@ -43,7 +43,6 @@ func Handler(conn net.Conn, messages chan string, clientip chan string) {
 		}
 		//fmt.Println("Rec[",conn.RemoteAddr().String(),"] Say :" ,string(buf[0:lenght]))
 		reciveStr := string(buf[0:lenght])
-		fmt.Println("接受的数据", reciveStr)
 		messages <- reciveStr
 		ip := conn.RemoteAddr().String()
 		clientip <- ip
@@ -78,6 +77,7 @@ func echoHandler(conns *map[string]net.Conn, messages chan string, clientip chan
 					fmt.Println(err.Error())
 					delete(*conns, key)
 				}
+				delete(*conns, key)
 			}
 		}
 	}
@@ -105,11 +105,8 @@ func StartServer(port string) {
 	go echoHandler(&conns, messages, clientip)
 
 	for {
-		fmt.Println("Listening ...")
 		conn, err := l.Accept()
-		fmt.Println("conn:", &conn)
 		checkError(err, "Accept")
-		fmt.Println("Accepting ...")
 		conns[conn.RemoteAddr().String()] = conn
 		//启动一个新线程
 		go Handler(conn, messages, clientip)
