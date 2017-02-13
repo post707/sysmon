@@ -70,7 +70,12 @@ func echoHandler(conns *map[string]net.Conn, messages chan string, clientip chan
 			if clientip == key {
 				switch msg {
 				case "cpu":
-					test(key, value, conns)
+					fmt.Println("send data to", "ip", key)
+					sendmsg := cpuStat()
+					_, err := value.Write([]byte(sendmsg))
+					if err != nil {
+						fmt.Println(err.Error())
+					}
 				}
 				delete(*conns, key)
 			}
@@ -79,15 +84,15 @@ func echoHandler(conns *map[string]net.Conn, messages chan string, clientip chan
 
 }
 
-func test(key string, value net.Conn, conns *map[string]net.Conn) {
-	fmt.Println("send data to", "ip", key)
-	sendmsg := cpuStat()
-	_, err := value.Write([]byte(sendmsg))
-	if err != nil {
-		fmt.Println(err.Error())
-		delete(*conns, key)
-	}
-}
+// func test(key string, value *net.Conn, conns *map[string]net.Conn) {
+// 	fmt.Println("send data to", "ip", key)
+// 	sendmsg := cpuStat()
+// 	_, err := *value.Write([]byte(sendmsg))
+// 	if err != nil {
+// 		fmt.Println(err.Error())
+// 		delete(*conns, key)
+// 	}
+// }
 
 ////////////////////////////////////////////////////////
 //
