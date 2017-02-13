@@ -80,8 +80,7 @@ func echoHandler(conns *map[string]net.Conn, messages chan string, clientip chan
 }
 
 func test(key string, value net.Conn, conns *map[string]net.Conn) {
-	fmt.Println("connection is connected from ...", "ip", key, "values", value.RemoteAddr().String())
-
+	fmt.Println("send data to", "ip", key)
 	sendmsg := cpuStat()
 	_, err := value.Write([]byte(sendmsg))
 	if err != nil {
