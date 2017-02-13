@@ -72,7 +72,6 @@ func echoHandler(conns *map[string]net.Conn, messages chan string, clientip chan
 				case "cpu":
 					test(key, value, conns)
 				}
-
 				delete(*conns, key)
 			}
 		}
