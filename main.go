@@ -105,6 +105,7 @@ func StartServer(port string) {
 	go echoHandler(&conns, messages, clientip)
 
 	for {
+		fmt.Println("Listening ...")
 		conn, err := l.Accept()
 		checkError(err, "Accept")
 		conns[conn.RemoteAddr().String()] = conn
