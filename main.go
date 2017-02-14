@@ -77,7 +77,7 @@ func echoHandler(conns *map[string]net.Conn, messages chan string, clientip chan
 						fmt.Println(err.Error())
 						delete(*conns, key)
 					}
-				case "memStat":
+				case "mem":
 					fmt.Println("send data to", "ip", key)
 					sendmsg := cpuStat()
 					_, err := value.Write([]byte(sendmsg))
@@ -85,7 +85,7 @@ func echoHandler(conns *map[string]net.Conn, messages chan string, clientip chan
 						fmt.Println(err.Error())
 						delete(*conns, key)
 					}
-				case "ioStat":
+				case "io":
 					fmt.Println("send data to", "ip", key)
 					sendmsg := cpuStat()
 					_, err := value.Write([]byte(sendmsg))
@@ -114,23 +114,62 @@ func StartServer(port string) {
 	checkError(err, "ResolveTCPAddr")
 	l, err := net.ListenTCP("tcp", tcpAddr)
 	checkError(err, "ListenTCP")
-	conns := make(map[string]net.Conn)
-	messages := make(chan string, 10)
-	clientip := make(chan string, 10)
+	//conns := make(map[string]net.Conn)
+	//messages := make(chan string, 10)
+	//clientip := make(chan string, 10)
 
-	//启动服务器广播线程
-	go echoHandler(&conns, messages, clientip)
+	// //启动服务器广播线程
+	// go echoHandler(&conns, messages, clientip)
 
 	for {
 		fmt.Println("Listening ...")
 		conn, err := l.Accept()
 		checkError(err, "Accept")
-		conns[conn.RemoteAddr().String()] = conn
+		//conns[conn.RemoteAddr().String()] = conn
 		//启动一个新线程
-		go Handler(conn, messages, clientip)
+		buf := make([]byte, 1024)
+		lenght, err := conn.Read(buf)
+		if checkError(err, "Connection") == false {
+			conn.Close()
+			break
+		}
+		if lenght > 0 {
+			buf[lenght] = 0
+		}
+		//fmt.Println("Rec[",conn.RemoteAddr().String(),"] Say :" ,string(buf[0:lenght]))
+		reciveStr := string(buf[0:lenght])
+		// messages <- reciveStr
+		// ip := conn.RemoteAddr().String()
+		// clientip <- ip
+
+		switch reciveStr {
+		case "cpu":
+
+			sendmsg := cpuStat()
+			_, err := conn.Write([]byte(sendmsg))
+			if err != nil {
+				fmt.Println(err.Error())
+
+			}
+		case "mem":
+
+			sendmsg := cpuStat()
+			_, err := conn.Write([]byte(sendmsg))
+			if err != nil {
+				fmt.Println(err.Error())
+
+			}
+		case "io":
+
+			sendmsg := cpuStat()
+			_, err := conn.Write([]byte(sendmsg))
+			if err != nil {
+				fmt.Println(err.Error())
+
+			}
+		}
 
 	}
-
 }
 
 func main() {
