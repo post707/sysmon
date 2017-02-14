@@ -42,7 +42,7 @@ func StartServer(port string) {
 				fmt.Println(err.Error())
 			}
 		case "mem":
-			sendmsg := cpuStat()
+			sendmsg := memStat()
 			_, err := conn.Write([]byte(sendmsg))
 			if err != nil {
 				fmt.Println(err.Error())
