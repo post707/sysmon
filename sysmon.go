@@ -20,7 +20,7 @@ func cpuStat() []byte {
 
 func memStat() []byte {
 
-	cmd := exec.Command("/bin/sh", "-c", `free -m|awk   'free -m|grep -v total|awk   'BEGIN {print "Flag TOTAL USED FREE"} {print $1" "$2" "$3" "$4}''`)
+	cmd := exec.Command("/bin/sh", "-c", `free -m|grep -v total|awk   'BEGIN {print "Flag TOTAL USED FREE"} {print $1" "$2" "$3" "$4}'`)
 	mem, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(err)

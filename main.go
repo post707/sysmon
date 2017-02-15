@@ -19,6 +19,30 @@ func StartServer(port string) {
 	l, err := net.ListenTCP("tcp", tcpAddr)
 	checkError(err, "ListenTCP")
 
+	//读取配置文件
+	fileConfig := new(Config)
+	fileConfig.InitConfig("sysmon.conf")
+	switch fileConfig.Mymap["type->code"] {
+	case "0":
+		server(l)
+	case "1":
+		server(l)
+	default:
+		server(l)
+	}
+
+}
+
+func main() {
+
+	StartServer("6061")
+
+}
+
+////////////////////////////////////////////////////////
+//错误检查
+////////////////////////////////////////////////////////
+func server(l net.Listener) {
 	for {
 		fmt.Println("Listening ...")
 		conn, err := l.Accept()
@@ -48,7 +72,7 @@ func StartServer(port string) {
 				fmt.Println(err.Error())
 			}
 		case "io":
-			sendmsg := cpuStat()
+			sendmsg := ioStat()
 			_, err := conn.Write([]byte(sendmsg))
 			if err != nil {
 				fmt.Println(err.Error())
@@ -58,16 +82,8 @@ func StartServer(port string) {
 	}
 }
 
-func main() {
-
-	StartServer("6061")
-
-}
-
 ////////////////////////////////////////////////////////
-//
 //错误检查
-//
 ////////////////////////////////////////////////////////
 func checkError(err error, info string) (res bool) {
 
@@ -76,4 +92,8 @@ func checkError(err error, info string) (res bool) {
 		return false
 	}
 	return true
+}
+
+func permission() {
+
 }
